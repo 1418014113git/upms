@@ -1,0 +1,64 @@
+management.security.enabled: false
+spring.jmx.enabled: false
+
+server:
+  port: 8082
+  servlet:
+    contextPath: /upms
+  http:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+spring:
+  jackson:
+    dateFormat: yyyy-MM-dd HH:mm:ss
+    timeZone: GMT+8
+  application:
+    name: upms
+  profiles:
+    active: dev
+  datasource:
+    separator: ;;
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: ${db.driver}
+    platform: mysql
+    initial-size: 2
+    maximum-pool-size: 10
+    connection-timeout: 5000
+    validationQuery: select 1
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    continue-on-error: true
+    initialization-mode: always
+  mail:
+    protocol: smtp
+    host: smtp.163.com
+    port: 465
+    from: UPMS
+    account: 123wangpengwei@163.com
+    password: wangpengwei1987
+    smtpAuth: true
+    sslEnable: true
+    charset: utf-8
+
+eureka:
+  client:
+    registerWithEureka: false
+    healthcheck:
+      enabled: false # 开启健康检查
+    fetchRegistry: false
+    registry-fetch-interval-seconds: 60 #获取注册信息的时间间隔(S),默认为30秒
+  instance:
+    prefer-ip-address: false
+    lease-renewal-interval-in-seconds: 10  #生产环境上，这个值得设为30
+    lease-expiration-duration-in-seconds: 10   #生产环境上，这个值得设为30
+user:
+  defaultPwd: 12345678
+  loginFailIntervalMinutes: 5
+  loginFailInTimes: 3
+  loginBanIntervalMinutes: 30

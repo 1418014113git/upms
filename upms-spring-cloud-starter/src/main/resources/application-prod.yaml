@@ -1,0 +1,5 @@
+db:
+  url: jdbc:mysql://192.168.43.201:3306/upms2?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+  username: upms
+  password: NmgHr$123
+  driver: com.mysql.jdbc.Driver
