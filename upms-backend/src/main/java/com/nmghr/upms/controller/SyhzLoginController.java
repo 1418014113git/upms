@@ -18,6 +18,7 @@ import com.nmghr.upms.config.UpmsGlobalException;
 import com.nmghr.upms.config.UpmsProperties;
 import com.nmghr.util.GetIpUtil;
 import com.nmghr.util.Md5Utils;
+import com.nmghr.util.Sms4Util;
 import com.nmghr.util.VerifyCodeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -163,10 +164,12 @@ public class SyhzLoginController {
     String defaultPwd = upmsProperties.getDefaultPwd();
     String salt = userMsg.get("salt").toString();
     Object tryLoginTime = userMsg.get("try_login_time");// 尝试登录失败时间
-    String pwd = Md5Utils.encryptMd5Password(userName, userPwd, salt);
+//    String pwd = Md5Utils.encryptMd5Password(userName, userPwd, salt);
+    String pwd = Sms4Util.Encryption(userPwd, salt);
     String userId = String.valueOf(userMsg.get("id"));
     if (pwd.equals(passWord)) {
-      String dePwd = Md5Utils.encryptMd5Password(userName, defaultPwd, salt);
+//      String dePwd = Md5Utils.encryptMd5Password(userName, defaultPwd, salt);
+      String dePwd = Sms4Util.Encryption(defaultPwd, salt);
       if (pwd.equals(dePwd)) {
         /*
          * resMessage = "默认密码为123456，是否修改密码？"; throw new UpmsGlobalException(UpmsErrorEnum.UNLOGIN.getCode(), resMessage);

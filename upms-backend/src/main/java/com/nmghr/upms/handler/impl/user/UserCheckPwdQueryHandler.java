@@ -10,6 +10,7 @@ package com.nmghr.upms.handler.impl.user;
 
 import java.util.Map;
 
+import com.nmghr.util.Sms4Util;
 import org.springframework.stereotype.Service;
 
 import com.nmghr.basic.common.Constant;
@@ -47,7 +48,7 @@ private static final String PASS_CHECK_FALSE="false";//密码错误
     String pwd = userMap.get("passWord").toString();
     String salt = userMap.get("salt").toString();
     String userName = userMap.get("userName").toString();
-    String pWd = Md5Utils.encryptMd5Password(userName, passWord.toString(), salt);
+    String pWd = Sms4Util.Encryption(passWord.toString(), salt);
     if (pwd.equals(pWd)) {
       return PASS_CHECK_TRUE;
     } else {
