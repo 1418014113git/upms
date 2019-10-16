@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import com.nmghr.util.Sms4Util;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,7 +56,7 @@ public class UserSpecialSaveHandler extends AbstractSaveHandler {
 		String salt = SaltUtils.getSalt();
 		String userName = String.valueOf(requestBody.get("userName"));
 		String userWord = this.getStringRandom(8);
-		String pwd = Md5Utils.encryptMd5Password(userName, userWord, salt);
+		String pwd = Sms4Util.Encryption(userWord, salt);
 		requestBody.put("passWord", pwd);
 		requestBody.put("salt", salt);
 		requestBody.put("userKey", userKey);

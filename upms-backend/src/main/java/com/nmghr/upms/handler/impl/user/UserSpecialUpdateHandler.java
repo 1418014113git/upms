@@ -3,6 +3,7 @@ package com.nmghr.upms.handler.impl.user;
 import java.util.Map;
 import java.util.Random;
 
+import com.nmghr.util.Sms4Util;
 import org.springframework.stereotype.Service;
 
 import com.nmghr.basic.common.Constant;
@@ -26,7 +27,7 @@ public class UserSpecialUpdateHandler extends AbstractUpdateHandler {
 				String salt = SaltUtils.getSalt();
 				String userName = String.valueOf(requestBody.get("userName"));
 				String userWord = this.getStringRandom(8);
-				String pwd = Md5Utils.encryptMd5Password(userName, userWord, salt);
+				String pwd = Sms4Util.Encryption(userWord, salt);
 				requestBody.put("userWord", pwd);
 				requestBody.put("salt", salt);
 				requestBody.put("seeWord", userWord);
@@ -39,7 +40,7 @@ public class UserSpecialUpdateHandler extends AbstractUpdateHandler {
 			String salt = SaltUtils.getSalt();
 			String userName = String.valueOf(requestBody.get("userName"));
 			String userWord = String.valueOf(requestBody.get("userWord"));
-			String pwd = Md5Utils.encryptMd5Password(userName, userWord, salt);
+			String pwd = Sms4Util.Encryption(userWord, salt);
 			requestBody.put("userWord", pwd);
 			requestBody.put("salt", salt);
 			requestBody.put("seeWord", userWord);

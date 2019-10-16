@@ -28,8 +28,8 @@ public class SaltUtils {
         "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
     StringBuffer shortBuffer = new StringBuffer();
     String uuid = UUID.randomUUID().toString().replace("-", "");
-    for (int i = 0; i < 8; i++) {
-      String str = uuid.substring(i * 4, i * 4 + 4);
+    for (int i = 0; i < 16; i++) {
+      String str = uuid.substring(i * 2, i * 2 + 2);
       int x = Integer.parseInt(str, 16);
       shortBuffer.append(chars[x % 0x3E]);
     }
