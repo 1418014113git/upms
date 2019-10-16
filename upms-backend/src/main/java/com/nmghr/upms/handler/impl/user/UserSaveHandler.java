@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
+import com.nmghr.util.Sms4Util;
 import org.springframework.stereotype.Service;
 
 import com.nmghr.basic.common.Constant;
@@ -51,7 +52,7 @@ public class UserSaveHandler extends AbstractSaveHandler {
 		requestBody.put("userSecret", userSecret);
 		String passWord = requestBody.get("passWord").toString();
 		String userName = requestBody.get("userName").toString();
-		String pwd = Md5Utils.encryptMd5Password(userName, passWord, salt);
+		String pwd = Sms4Util.Encryption(passWord, salt);
 		requestBody.put("passWord", pwd);
 		Object appCode = requestBody.get("appCode");
 		int isUpms = Integer.parseInt(requestBody.get("isUpms").toString());
