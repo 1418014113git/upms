@@ -10,6 +10,7 @@ package com.nmghr.upms.handler.impl.user;
 
 import java.util.Map;
 
+import com.nmghr.util.Sms4Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -56,7 +57,7 @@ public class UserResetPwdUpdateHandler extends AbstractUpdateHandler {
     } else {
       Object oldpwd = requestBody.get("oldPassWord");
       ValidationUtils.notNull(oldpwd, "旧密码不能为空");
-      String olePwd = Md5Utils.encryptMd5Password(userName, oldpwd.toString(), salt);
+      String olePwd = Sms4Util.Encryption(oldpwd.toString(), salt);
       if (olePwd.equals(pWd)) {
         passWord = pwd.toString();
       } else {
@@ -64,7 +65,7 @@ public class UserResetPwdUpdateHandler extends AbstractUpdateHandler {
         throw new UpmsGlobalException(UpmsErrorEnum.UNLOGIN.getCode(), resMessage);
       }
     }
-    String newPwd = Md5Utils.encryptMd5Password(userName, passWord, salt);
+    String newPwd = Sms4Util.Encryption(passWord, salt);
     requestBody.put("passWord", newPwd);
     LocalThreadStorage.put(Constant.CONTROLLER_ALIAS, "USERRESETPWD");// 用户重置密码
     return baseService.update(id, requestBody);

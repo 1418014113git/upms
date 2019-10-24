@@ -9,6 +9,8 @@ import com.nmghr.upms.config.UpmsGlobalException;
 import com.nmghr.upms.config.UpmsProperties;
 import com.nmghr.util.MailUtils;
 import com.nmghr.util.Md5Utils;
+import com.nmghr.util.SaltUtils;
+import com.nmghr.util.Sms4Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -50,12 +52,13 @@ public class ResetPwdController {
     }
     // 保存默认密码
     String id = String.valueOf(userMap.get("id"));
-    String userName = String.valueOf(userMap.get("user_name"));
-    String salt = String.valueOf(userMap.get("salt"));
-//    String newPwd = Md5Utils.encryptMd5Password(userName, properties.getDefaultPwd(), salt);
+//    String userName = String.valueOf(userMap.get("user_name"));
+    String salt = SaltUtils.getSalt();
     String newPwd = getRandomString(8);
-    String newPwdMd5 = Md5Utils.encryptMd5Password(userName, newPwd, salt);
+    String newPwdMd5 = Sms4Util.Encryption(newPwd, salt);
+//    String newPwdMd5 = Md5Utils.encryptMd5Password(userName, newPwd, salt);
     requestBody.put("passWord", newPwdMd5);
+    requestBody.put("salt", salt);
     LocalThreadStorage.put(Constant.CONTROLLER_ALIAS, "USERRESETPWD");// 用户重置密码
     Object i = baseService.update(id, requestBody);
     if (Integer.parseInt(String.valueOf(i)) > 0) {
