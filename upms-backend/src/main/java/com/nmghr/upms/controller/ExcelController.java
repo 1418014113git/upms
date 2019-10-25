@@ -18,20 +18,27 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.nmghr.basic.common.Constant;
+import com.nmghr.basic.common.Result;
 import com.nmghr.basic.core.common.LocalThreadStorage;
 import com.nmghr.basic.core.service.IBaseService;
+import com.nmghr.basic.core.service.handler.ISaveHandler;
+import com.nmghr.basic.core.util.SpringUtils;
+import com.nmghr.upms.controller.vo.personVo;
 import com.sargeraswang.util.ExcelUtil.ExcelUtil;
 
 @RestController
@@ -99,7 +106,7 @@ public class ExcelController {
 		if (type == 2) {
 			list = userlist(list);
 		}
-		Integer[] lockedArray = new Integer[] {15};// 锁定列
+		Integer[] lockedArray = new Integer[] { 15 };// 锁定列
 		ArrayList<Integer> lockedList = new ArrayList<Integer>(Arrays.asList(lockedArray));
 		ExcelUtil.exportExcel(headersMap, list, os, lockedList);
 		// 配置浏览器下载
@@ -131,6 +138,137 @@ public class ExcelController {
 
 	}
 
+	@PostMapping(value = "/uploadFile")
+	@ResponseBody
+	public Object uploadFile(@RequestParam("file") MultipartFile mulFile, @RequestParam("type") int type,
+			HttpServletRequest request) {
+		log.info("excel uploadFile file start {}{}", mulFile, type);
+		Map<String, Object> result = new HashMap<String, Object>();
+		try {
+			if (null != mulFile && type > 0) {
+				if (type == 1) {
+					List<personVo> list = (List<personVo>) ExcelUtil.importExcel(personVo.class,
+							mulFile.getInputStream(), 0);
+
+					if (!CollectionUtils.isEmpty(list))
+						log.info("excel uploadFile file query size {}", list.size());
+					String message = savePerson(list);
+					if ("true".equals(message)) {
+						return Result.ok(result);
+					} else {
+						return Result.fail("999999", "以下警号警员信息不全或已经添加：" + message);
+					}
+				}
+			}
+			return Result.ok(result);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			log.error("excel uploadFile error", e.getMessage());
+			e.printStackTrace();
+		}
+		log.info("excel uploadFile file end");
+		return Result.fail("999999", "导入异常");
+	}
+
+	private String savePerson(List<personVo> list) throws Exception {
+		String messge = " ";
+		for (personVo person : list) {
+			if (validation(person)) {
+				Map<String, Object> personMap = new HashMap<String, Object>();
+				personMap.put("userName", person.getUserName());
+				personMap.put("passWord", "12345678");
+				personMap.put("realName", person.getName());
+				personMap.put("userIdNumber", person.getIdNumber());
+				personMap.put("phone", person.getPhone());
+				personMap.put("appCode", 0);
+				personMap.put("createId", 0);
+				personMap.put("deleteable", 0);
+				personMap.put("enabled", 1);
+				personMap.put("isUpms", 1);
+				personMap.put("pwdFree", 0);
+				personMap.put("userSex", person.getSex());
+				personMap.put("userType", 0);
+				personMap.put("userState", person.getUserSort());
+				personMap.put("userSort", 1);
+
+				ISaveHandler saveHandler = SpringUtils.getBean("userSaveHandler", ISaveHandler.class);
+				Object object = saveHandler.save(personMap);// user
+				Map<String, Object> appMap = new HashMap<String, Object>();
+				appMap.put("appId", 1);
+				appMap.put("userId", object);
+				ISaveHandler saveAppHandler = SpringUtils.getBean("userallotappSaveHandler", ISaveHandler.class);
+				saveAppHandler.save(appMap);// app
+				if (person.getDepartCode() != null || "".equals(person.getDepartCode())) {
+					LocalThreadStorage.put(Constant.CONTROLLER_ALIAS, "DEPARTID");
+					Map<String, Object> departIdmap = (Map<String, Object>) baseService
+							.get(person.getDepartCode().toString());
+					Map<String, Object> departMap = new HashMap<String, Object>();
+					departMap.put("userId", object);
+					departMap.put("departId", departIdmap.get("id"));
+					departMap.put("appId", 1);
+					ISaveHandler saveDepartHandler = SpringUtils.getBean("userallotdepartSaveHandler",
+							ISaveHandler.class);
+					saveDepartHandler.save(departMap);// depart
+				}
+				if (person.getRole() != null || "".equals(person.getRole())) {
+					LocalThreadStorage.put(Constant.CONTROLLER_ALIAS, "ROLEID");
+					Map<String, Object> roleIdmap = (Map<String, Object>) baseService.get(person.getRole().toString());
+					Map<String, Object> roleMap = new HashMap<String, Object>();
+					roleMap.put("roleId", roleIdmap.get("id"));
+					roleMap.put("appId", 1);
+					roleMap.put("userId", object);
+					ISaveHandler saveRoleHandler = SpringUtils.getBean("userallotroleSaveHandler", ISaveHandler.class);
+					saveRoleHandler.save(roleMap);// role
+				}
+			} else {
+				messge = messge + "," + person.getUserName();
+			}
+		}
+		if (messge.length() > 2) {
+			return messge;
+		} else {
+			return "true";
+		}
+	}
+
+	private boolean validation(personVo person) throws Exception {
+		if (person.getIdNumber() == null || "".equals(person.getIdNumber())) {
+			return false;
+		} else if (person.getName() == null || "".equals(person.getName())) {
+			return false;
+		} else if (person.getPhone() == null || "".equals(person.getPhone())) {
+			return false;
+		} else if (person.getSex() == null || "".equals(person.getSex())) {
+			return false;
+		} else if (person.getUserName() == null || "".equals(person.getUserName())) {
+			return false;
+		} else if (person.getUserSort() == null || "".equals(person.getUserSort())) {
+			return false;
+		}
+		if ("男".equals(person.getSex())) {
+			person.setSex("0");
+		} else if ("女".equals(person.getSex())) {
+			person.setSex("1");
+		} else if ("不详".equals(person.getSex())) {
+			person.setSex("2");
+		}
+		if ("民警".equals(person.getUserSort())) {
+			person.setUserSort("1");
+		} else if ("辅警".equals(person.getUserSort())) {
+			person.setUserSort("2");
+		} else if ("工勤".equals(person.getUserSort())) {
+			person.setUserSort("3");
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		LocalThreadStorage.put(Constant.CONTROLLER_ALIAS, "USERNAME");
+		map.put("userName", person.getUserName());
+		List<Map<String, Object>> roleIdmap = (List<Map<String, Object>>) baseService.list(map);
+		if (roleIdmap != null && roleIdmap.size() > 0) {
+			return false;
+		}
+		return true;
+	}
+
 	private List<Map<String, Object>> tolist(List<Map<String, Object>> list) {
 		int i = 1;
 		for (Map<String, Object> map : list) {
@@ -156,6 +294,7 @@ public class ExcelController {
 		return list;
 
 	}
+
 	private List<Map<String, Object>> userlist(List<Map<String, Object>> list) {
 		int i = 1;
 		for (Map<String, Object> map : list) {
@@ -235,7 +374,7 @@ public class ExcelController {
 				} else if ("6".equals(workerDuty)) {
 					map.put("workerDuty", "无");
 				}
-				
+
 			} else if ("3".equals(departType)) {
 				if ("1".equals(workerDuty)) {
 					map.put("workerDuty", "大队长");
@@ -246,7 +385,7 @@ public class ExcelController {
 				} else if ("4".equals(workerDuty)) {
 					map.put("workerDuty", "无");
 				}
-				
+
 			} else if ("4".equals(departType)) {
 				if ("1".equals(workerDuty)) {
 					map.put("workerDuty", "所长");
@@ -257,7 +396,7 @@ public class ExcelController {
 				} else if ("4".equals(workerDuty)) {
 					map.put("workerDuty", "无");
 				}
-				
+
 			}
 
 			String userSort = String.valueOf(map.get("userSort"));
@@ -282,7 +421,7 @@ public class ExcelController {
 				} else if ("5".equals(userState)) {
 					map.put("userState", "其他");
 				}
-				
+
 			} else {
 				if ("1".equals(userState)) {
 					map.put("userState", "在职");
@@ -293,7 +432,7 @@ public class ExcelController {
 				} else if ("4".equals(userState)) {
 					map.put("userState", "其他");
 				}
-				
+
 			}
 			i++;
 		}
