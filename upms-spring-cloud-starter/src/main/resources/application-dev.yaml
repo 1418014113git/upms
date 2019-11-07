@@ -1,9 +1,11 @@
 db:
-  url: jdbc:mysql://192.168.43.201:3306/hr-upms-promote?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
-  username: hrupms
-  password: 12345678
+  url: jdbc:mysql://192.168.42.230:3306/shanxi-upms?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+  username: root
+  password: 123456
   driver: com.mysql.jdbc.Driver
 eureka:
   client:
     serviceUrl:
       defaultZone: http://Nmghr:NMhr$123@192.168.43.32:7007/eureka/
+log:
+  level:error
