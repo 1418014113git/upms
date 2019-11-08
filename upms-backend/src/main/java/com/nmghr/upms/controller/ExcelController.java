@@ -105,12 +105,12 @@ public class ExcelController {
 			headersMap.put("userSort", "人员类别");
 			headersMap.put("userState", "状态");
 			headerMapWidth.put("0", 1000);
-			headerMapWidth.put("1", 4000);
+			headerMapWidth.put("1", 5000);
 			headerMapWidth.put("2", 2500);
 			headerMapWidth.put("3", 5000);
 			headerMapWidth.put("4", 1200);
-			headerMapWidth.put("5", 2200);
-			headerMapWidth.put("6", 2200);
+			headerMapWidth.put("5", 3000);
+			headerMapWidth.put("6", 3000);
 			headerMapWidth.put("7", 3200);
 			headerMapWidth.put("8", 3000);
 			headerMapWidth.put("9", 2000);
