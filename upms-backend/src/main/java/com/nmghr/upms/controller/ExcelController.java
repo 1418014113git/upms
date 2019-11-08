@@ -40,6 +40,7 @@ import com.nmghr.basic.core.service.handler.ISaveHandler;
 import com.nmghr.basic.core.util.SpringUtils;
 import com.nmghr.upms.controller.vo.personVo;
 import com.sargeraswang.util.ExcelUtil.ExcelUtil;
+import com.sargeraswang.util.ExcelUtil.ExcelUtil2019;
 
 @RestController
 @RequestMapping("/excel")
@@ -56,6 +57,7 @@ public class ExcelController {
 
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		Map<String, String> headersMap = new LinkedHashMap<String, String>();
+		Map<String, Integer> headerMapWidth = new LinkedHashMap<String, Integer>();
 		Integer type = Integer.getInteger(String.valueOf(requestParam.get("type")));
 
 		type = Integer.parseInt(request.getParameter("type"));
@@ -77,10 +79,17 @@ public class ExcelController {
 			headersMap.put("sequence", "序号");
 			headersMap.put("departName", "机构全称");
 			headersMap.put("departLevel", "机构级别");
-			headersMap.put("realityNum", "实有人数");
+			headersMap.put("realityNum", "实有人数 ");
 			headersMap.put("areaName", "所属行政区划");
 			headersMap.put("mainLeader", "主要负责人");
 			headersMap.put("subofficeLeader", "分管局领导");
+			headerMapWidth.put("0", 1000);
+			headerMapWidth.put("1", 10000);
+			headerMapWidth.put("2", 2500);
+			headerMapWidth.put("3", 2000);
+			headerMapWidth.put("4", 5000);
+			headerMapWidth.put("5", 4000);
+			headerMapWidth.put("6", 4000);
 		}
 		if (type == 2) {
 			fileName = "人员信息";
@@ -95,6 +104,17 @@ public class ExcelController {
 			headersMap.put("phone", "手机号码");
 			headersMap.put("userSort", "人员类别");
 			headersMap.put("userState", "状态");
+			headerMapWidth.put("0", 1000);
+			headerMapWidth.put("1", 5000);
+			headerMapWidth.put("2", 2500);
+			headerMapWidth.put("3", 5000);
+			headerMapWidth.put("4", 1200);
+			headerMapWidth.put("5", 3000);
+			headerMapWidth.put("6", 3000);
+			headerMapWidth.put("7", 3200);
+			headerMapWidth.put("8", 3000);
+			headerMapWidth.put("9", 2000);
+			headerMapWidth.put("10", 4000);
 		}
 		LocalThreadStorage.put(Constant.CONTROLLER_ALIAS, alias.toUpperCase());
 		alias = Constant.getHandlerBeanName(alias, Constant.OPERATOR_QUERY);
@@ -108,7 +128,7 @@ public class ExcelController {
 		}
 		Integer[] lockedArray = new Integer[] { 15 };// 锁定列
 		ArrayList<Integer> lockedList = new ArrayList<Integer>(Arrays.asList(lockedArray));
-		ExcelUtil.exportExcel(headersMap, list, os, lockedList);
+		ExcelUtil2019.exportExcel(headersMap, list, os, lockedList, headerMapWidth);
 		// 配置浏览器下载
 		byte[] content = os.toByteArray();
 		InputStream is = new ByteArrayInputStream(content);
