@@ -54,6 +54,8 @@ public class MenuRemoveHandler extends AbstractRemoveHandler{
     } else {
       LocalThreadStorage.put(Constant.CONTROLLER_ALIAS, "MENU");// 根据菜单ID删除菜单信息
       baseService.remove(id);
+      LocalThreadStorage.put(Constant.CONTROLLER_ALIAS, "MENUBUTTON");// 根据菜单ID删除按钮信息
+      baseService.remove(id);
     }
   }
 }
