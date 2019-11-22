@@ -12,9 +12,11 @@ package com.nmghr.upms.controller;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -111,9 +113,13 @@ public class PKILoginController {
 
       // 设置认证方式、报文token、session中认证的随机密码、客户端认证原文、认证随机数、远程地址
       //认证方式
-      jitGatewayUtil.jitGatewayUtilBean.setAuthMode(request.getParameter(JitGatewayUtil.AuthConstant.MSG_AUTH_MODE));
+      //jitGatewayUtil.jitGatewayUtilBean.setAuthMode(request.getParameter(JitGatewayUtil.AuthConstant.MSG_AUTH_MODE));
+      jitGatewayUtil.jitGatewayUtilBean.setAuthMode("cert");
+
       //网关的时候应该默认是有token，直接访问服务应该是null,这块是需要在生产内网环境测试验证
       jitGatewayUtil.jitGatewayUtilBean.setToken(request.getParameter(JitGatewayUtil.AuthConstant.MSG_TOKEN));
+      //jitGatewayUtil.jitGatewayUtilBean.setToken(\);
+
       //保存在session中的随机数
       jitGatewayUtil.jitGatewayUtilBean.setOriginal_data(this.getProperties(request.getSession(),JitGatewayUtil.AuthConstant.KEY_ORIGINAL_DATA));
       
@@ -155,8 +161,22 @@ public class PKILoginController {
       logger.info("身份认证结束！\n");
       
         //以下是获取到身份证以后，根据身份证获取用户的upms信息
+      
+   
+     
+     Map userInfoMap1 =  (Map)session.getAttribute("certAttributeNodeMap");
+     Object uk = null;
 
-        Object uk = requestBody.get("uk");
+    	for(Object key :userInfoMap1.keySet()) {
+    	String[] k = (String[]) key;
+    	if(k[0].equals("_saml_cert_subject") || k[0].equals("X509Certificate.SubjectDN")) {
+    		uk = userInfoMap1.get(key);
+    		break;
+    	}
+  
+    	}
+    	
+    
         if (uk == null) {
           throw new Exception("uk参数为null");
         }

@@ -1,13 +1,13 @@
 db:
-  url: jdbc:mysql://192.168.43.201:3306/upms2?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
-  username: upms
-  password: 12345678
+  url: jdbc:mysql://92.1.94.5:3306/shanxi-upms?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+  username: root
+  password: hsyz/123456
   driver: com.mysql.jdbc.Driver
 pki:
   #认证地址
-  authURL: http://127.0.0.1:6180/MessageService
+  authURL: http://92.5.66.115:6180/MessageService
   #应用标识，根据实际情况修改，与网关中的配置的应用标识一致
-  appId: testApp
+  appId: sxhsy
   #调用应用服务器或者网关生成原文标志 1:调用应用服务器 2:调用网关，默认为1
   randomFrom: 1
   #是否检查访问控制状态，当设置为"true"时，网关检查用户是否允许访问此应用，并在报文中给出相应的信息，默认为为false
