@@ -17,7 +17,7 @@ spring:
   application:
     name: upms
   profiles:
-    active: dev
+    active: prod
   datasource:
     separator: ;;
     url: ${db.url}
