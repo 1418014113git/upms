@@ -47,7 +47,12 @@ public class SyhzApiController {
     return baseService.list(params);
   }
 
-
+  @PostMapping("/api/deptsuser")
+  @ResponseBody
+  public Object getDeptsUser(@RequestBody Map<String, Object> params, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    LocalThreadStorage.put(Constant.CONTROLLER_ALIAS, "DEPTSUSER");
+    return baseService.list(params);
+  }
 
 
   /**
