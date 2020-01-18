@@ -10,16 +10,15 @@ package com.nmghr.upms.controller;
 
 import com.nmghr.basic.common.Constant;
 import com.nmghr.basic.common.Result;
+import com.nmghr.basic.common.exception.GlobalErrorException;
 import com.nmghr.basic.core.common.LocalThreadStorage;
 import com.nmghr.basic.core.service.IBaseService;
 import com.nmghr.basic.core.util.ValidationUtils;
 import com.nmghr.upms.config.UpmsErrorEnum;
 import com.nmghr.upms.config.UpmsGlobalException;
 import com.nmghr.upms.config.UpmsProperties;
-import com.nmghr.util.GetIpUtil;
-import com.nmghr.util.Md5Utils;
-import com.nmghr.util.Sms4Util;
-import com.nmghr.util.VerifyCodeUtils;
+import com.nmghr.upms.service.IpControlService;
+import com.nmghr.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -63,6 +62,9 @@ public class SyhzLoginController {
   @Qualifier("baseService")
   private IBaseService baseService;
 
+  @Autowired
+  private IpControlService ipControlService;
+
   @GetMapping("/login/verifycode1")
   public void code(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -105,6 +107,18 @@ public class SyhzLoginController {
 //    if (!code.equalsIgnoreCase((String) vcode)) {
 //      throw new UpmsGlobalException(UpmsErrorEnum.UNLOGIN.getCode(), "验证码不对");
 //    }
+
+
+    Map<String,Object> ipCheckMap = new HashMap();
+    ipCheckMap.put("ip",ipAddress);
+    try {
+      boolean ipCheck = (boolean) ipControlService.get(ipCheckMap);
+      if (!ipCheck) {
+        return Result.fail(UpmsErrorEnum.UNLOGIN.getCode(), "IP受限,请联系系统管理员");
+      }
+    }catch (Exception e){
+      throw new UpmsGlobalException(UpmsErrorEnum.UNLOGIN.getCode(), "IP校验异常，请联系管理员");
+    }
 
     requestBody.put("passWord", userPwd);
     LocalThreadStorage.put(Constant.CONTROLLER_ALIAS, "LOGIN");
@@ -320,7 +334,6 @@ public class SyhzLoginController {
     } else {
       butList = new ArrayList<>();
     }
-
 
     Map<String, Object> resMap = new HashMap<>();
     resMap.put("user", user);

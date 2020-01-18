@@ -1,8 +1,12 @@
 db:
-  url: jdbc:mysql://192.168.42.230:3306/shanxi-upms?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true
+  url: jdbc:mysql://192.168.43.201:3306/shanxi-upms?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
   username: root
-  password: 123456
+  password: root123
   driver: com.mysql.jdbc.Driver
+hsyz:
+  url: jdbc:mysql://192.168.43.201:3306/shanxi-hsyz?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&useSSL=false
+  username: root
+  password: root123
 eureka:
   client:
     serviceUrl:
