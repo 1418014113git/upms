@@ -40,7 +40,7 @@ import com.nmghr.basic.core.service.handler.ISaveHandler;
 import com.nmghr.basic.core.util.SpringUtils;
 import com.nmghr.upms.controller.vo.personVo;
 import com.sargeraswang.util.ExcelUtil.ExcelUtil;
-import com.sargeraswang.util.ExcelUtil.ExcelUtil2019;
+//import com.sargeraswang.util.ExcelUtil.ExcelUtil2019;
 
 @RestController
 @RequestMapping("/excel")
@@ -128,7 +128,7 @@ public class ExcelController {
 		}
 		Integer[] lockedArray = new Integer[] { 15 };// 锁定列
 		ArrayList<Integer> lockedList = new ArrayList<Integer>(Arrays.asList(lockedArray));
-		ExcelUtil2019.exportExcel(headersMap, list, os, lockedList, headerMapWidth);
+		//ExcelUtil2019.exportExcel(headersMap, list, os, lockedList, headerMapWidth);
 		// 配置浏览器下载
 		byte[] content = os.toByteArray();
 		InputStream is = new ByteArrayInputStream(content);

@@ -102,23 +102,23 @@ public class SyhzLoginController {
 
     Map<String, Object> saveParamMap = new HashMap<String, Object>();
     String ipAddress = GetIpUtil.getIpAddr(request);
-    saveParamMap.put("ipAddress", ipAddress);
-    saveParamMap.put("userName", userName);
-//    if (!code.equalsIgnoreCase((String) vcode)) {
-//      throw new UpmsGlobalException(UpmsErrorEnum.UNLOGIN.getCode(), "验证码不对");
+//    saveParamMap.put("ipAddress", ipAddress);
+//    saveParamMap.put("userName", userName);
+////    if (!code.equalsIgnoreCase((String) vcode)) {
+////      throw new UpmsGlobalException(UpmsErrorEnum.UNLOGIN.getCode(), "验证码不对");
+////    }
+//
+//
+//    Map<String,Object> ipCheckMap = new HashMap();
+//    ipCheckMap.put("ip",ipAddress);
+//    try {
+//      boolean ipCheck = (boolean) ipControlService.get(ipCheckMap);
+//      if (!ipCheck) {
+//        return Result.fail(UpmsErrorEnum.UNLOGIN.getCode(), "IP受限,请联系系统管理员");
+//      }
+//    }catch (Exception e){
+//      throw new UpmsGlobalException(UpmsErrorEnum.UNLOGIN.getCode(), "IP校验异常，请联系管理员");
 //    }
-
-
-    Map<String,Object> ipCheckMap = new HashMap();
-    ipCheckMap.put("ip",ipAddress);
-    try {
-      boolean ipCheck = (boolean) ipControlService.get(ipCheckMap);
-      if (!ipCheck) {
-        return Result.fail(UpmsErrorEnum.UNLOGIN.getCode(), "IP受限,请联系系统管理员");
-      }
-    }catch (Exception e){
-      throw new UpmsGlobalException(UpmsErrorEnum.UNLOGIN.getCode(), "IP校验异常，请联系管理员");
-    }
 
     requestBody.put("passWord", userPwd);
     LocalThreadStorage.put(Constant.CONTROLLER_ALIAS, "LOGIN");

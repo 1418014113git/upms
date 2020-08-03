@@ -14,16 +14,10 @@
   <parent>
     <groupId>com.nmghr.basic</groupId>
     <artifactId>nmghr-basic</artifactId>
-    <version>0.2.7</version>
+    <version>0.2.6</version>
   </parent>
 
-  <repositories>
-    <repository>
-      <id>myRepositories</id>
-      <name>myRepositories</name>
-      <url>http://192.168.43.32:8081/repository/public/</url>
-    </repository>
-  </repositories>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
